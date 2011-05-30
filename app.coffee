@@ -26,7 +26,6 @@ meryl
   .get '/', (req, resp) ->
     # Get Projects
     db.projects.find(active: true).toArray (err, items) ->
-      console.log sys.inspect items
       resp.render 'layout', 
         body: 'index'
         context:
@@ -34,7 +33,6 @@ meryl
   .post '/projects', (req, resp) ->
     project = req.body
     project.active = true
-    console.log sys.inspect(project)
     db.projects.insert project, (err) ->
       resp.redirect '/'
 
@@ -45,7 +43,6 @@ meryl
         body: 'projects/show'
         context: project
   .post '/projects/{id}', (req, resp) ->
-    console.log sys.inspect req.body
     db.projects.findById req.params.id, (err, project) ->
       project.name = req.body.name
       project.description = req.body.description
@@ -53,7 +50,6 @@ meryl
       db.projects.updateById project._id, project, (err) ->
         resp.redirect "/projects/#{project.name}"
   .post '/projects/{id}/statuses', (req, resp) ->
-    console.log sys.inspect req.body
     db.projects.findById req.params.id, (err, project) ->
       project.statuses ?= []
       project.statuses.push req.body

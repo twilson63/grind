@@ -1,0 +1,34 @@
+# TheGrind
+
+A Project Tracking Application
+
+This application will allow you to create projects and track the status
+and percent complete.  You can have one to many stakeholders per project
+and they can be also be flagged as a participant.  If they are a
+participant, then they can update the status of the project.  If they
+are not, they will just get notified of the updated status.
+
+When a user logs in, they see a current timeline or latest statuses of
+all the projects they are following on the left, and a list of projects
+they are following on the right.
+
+Framework: meryl
+Template: Coffeekup
+DataStore: MongoSkin
+
+
+# About
+
+# Install
+
+# Usage
+
+# Testing
+
+# Feedback
+
+# License
+
+# Contributors
+
+

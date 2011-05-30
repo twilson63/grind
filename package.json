@@ -1,0 +1,18 @@
+{
+  "name": "grind",
+  "description": "A Project Tracking App",
+  "version": "0.0.1",
+  "homepage": "http://www.thegrindapp.com",
+  "author": "Tom Wilson",
+  "private": true,
+  "dependencies": {
+    "coffee-script": ">= 1.x",
+    "mongoskin": ">= 0.x",
+    "coffeekup": ">= 0.x",
+    "meryl": "> 0.x","connect": ">= 1.x",
+    "less": ">= 0.x",
+    "log4js": ">= 0.2.5"
+  },
+  "engines": { "node": ">= 0.4.7" }
+}
+

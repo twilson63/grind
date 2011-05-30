@@ -8,15 +8,11 @@ html ->
 
     link rel: 'icon', href: '/favicon.png'
     link href: 'http://code.jquery.com/mobile/latest/jquery.mobile.min.css', rel: 'stylesheet', type: 'text/css'
+    script src: 'http://code.jquery.com/jquery-1.6.1.min.js'
+    script src: 'http://code.jquery.com/mobile/latest/jquery.mobile.min.js'
 
   body ->
     @render @body, @context
-
-  script src: 'http://code.jquery.com/jquery-1.6.1.min.js'
-  #coffeescript ->
-  #  $(document).bind "mobileinit", ->
-  #    $.mobile.ajaxEnabled = false
-  script src: 'http://code.jquery.com/mobile/latest/jquery.mobile.min.js'
 
 
 

@@ -1,5 +1,5 @@
 mongo = require 'mongoskin'
-db = mongo.db('localhost/grind')
+db = mongo.db(process.env.MONGODB_URL || 'localhost:27017/grind')
 qs = require 'querystring'
 connect = require 'connect'
 meryl = require('meryl')
@@ -10,6 +10,7 @@ db.bind 'projects'
 
 opts=
   templateDir: 'views'
+  port: Number(process.env.VMC_APP_PORT) || 8000
 
 # Setup Template Engine
 coffeekup = require 'coffeekup'

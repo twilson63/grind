@@ -1,6 +1,6 @@
 div 'data-role': 'page', ->
   div 'data-role': 'header', -> 
-    h1 'The Grind - Projects'
+    h1 'The Grind'
     a href: '#add', -> 'Add Project'
   div 'data-role': 'content', ->
     ul 'data-role': 'listview', ->
@@ -10,7 +10,7 @@ div 'data-role': 'page', ->
 
 div id: 'add','data-role': 'page', 'data-id': 'add', ->
   div 'data-role': 'header', ->
-    h1 'The Grind - New Project'
+    h1 'The Grind'
   div 'data-role': 'content', ->
     p 'Create a new Project'
     form action: '/projects', method: 'post', ->

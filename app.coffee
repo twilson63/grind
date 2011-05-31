@@ -41,7 +41,7 @@ meryl
   .get '/projects/{name}', (req, resp) ->
     db.projects.findOne name: req.params.name, (err, project) ->
       resp.render 'layout',
-        body: 'projects/show'
+        body: 'projects'
         context: project
   .post '/projects/{id}', (req, resp) ->
     db.projects.findById req.params.id, (err, project) ->

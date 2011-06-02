@@ -21,14 +21,27 @@ DataStore: MongoSkin
 
 # Install
 
+    brew install mongodb
+    git clone git://github.com/twilson63/grind.git
+    npm install .
+    coffee app.coffee
+
 # Usage
+
 
 # Testing
 
+    cake spec - #notworking
+
 # Feedback
+
+Feel free to post any issues.. 
 
 # License
 
+See LICENSE
+
 # Contributors
 
+Tom Wilson (Author)
 

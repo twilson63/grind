@@ -17,6 +17,8 @@ coffeekup = require 'coffeekup'
 opts.templateExt = '.coffee'
 opts.templateFunc = coffeekup.adapters.meryl
 
+meryl.plug connect.basicAuth(process.env.APIKEY, process.env.SECRETKEY) if process.env.APIKEY? and process.env.SECRETKEY?
+
 meryl
   .plug(connect.logger())
   .plug(connect.compiler({ src: 'public', enable: ['coffeescript'] }))
@@ -53,7 +55,7 @@ meryl
   .post '/projects/{id}/statuses', (req, resp) ->
     db.projects.findById req.params.id, (err, project) ->
       project.statuses ?= []
-      project.statuses.push req.body
+      project.statuses.unshift req.body
       db.projects.updateById req.params.id, project, (err) ->
         resp.redirect "/projects/#{project.name}"
 

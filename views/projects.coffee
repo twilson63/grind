@@ -13,13 +13,13 @@ div 'data-role': 'page', ->
       li 'data-role': 'list-divider', -> 'Description'
       li -> @description
       li 'data-role': 'list-divider', -> 'Timeline'
+      li ->
+        a href: '#add-status', 'data-rel': 'dialog', -> 'Add Status'
       for status in @statuses || []
         li ->
           h4 status.stakeholder || 'unknown'
           p status.description || 'N/A'
           p status.report_date || 'unknown'
-      li ->
-        a href: '#add-status', 'data-rel': 'dialog', -> 'Add Status'
 div 'data-role': 'page', id: 'add-status', 'data-id': 'add-status',  ->
   div 'data-role': 'header', -> 
     h1 'Update Status'

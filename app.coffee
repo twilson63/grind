@@ -10,7 +10,9 @@ db.bind 'projects'
 
 opts=
   templateDir: 'views'
-  port: Number(process.env.PORT) #|| Number(process.env.VMC_APP_PORT) || 8000
+  port: process.env.PORT 
+
+#|| Number(process.env.VMC_APP_PORT) || 8000
 
 # Setup Template Engine
 coffeekup = require 'coffeekup'

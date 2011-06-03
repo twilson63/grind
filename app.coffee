@@ -10,7 +10,7 @@ db.bind 'projects'
 
 opts=
   templateDir: 'views'
-  port: Number(process.env.PORT) || Number(process.env.VMC_APP_PORT) || 8000
+  port: Number(process.env.PORT) #|| Number(process.env.VMC_APP_PORT) || 8000
 
 # Setup Template Engine
 coffeekup = require 'coffeekup'
@@ -21,7 +21,7 @@ meryl.plug connect.basicAuth(process.env.APIKEY, process.env.SECRETKEY) if proce
 
 meryl
   .plug(connect.logger())
-  .plug(connect.compiler({ src: 'public', enable: ['coffeescript'] }))
+  #.plug(connect.compiler({ src: 'public', enable: ['coffeescript'] }))
   .plug(connect.static 'public')
   .plug 'POST *', (req, resp, next) ->
     req.body = qs.parse req.postdata.toString()

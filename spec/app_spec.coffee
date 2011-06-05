@@ -1,14 +1,23 @@
-tobi = require 'tobi'
-app = require '../app.coffee'
-browser = tobi.createBrowser(8000,'localhost')
-#browser = tobi.createBrowser(app)
+zombie = require 'zombie'
+
+site = "http://localhost:8000"
 
 describe 'app', ->
-  it 'be valid', ->
-    browser.get '/', (res, $) ->
-      (expect $('body').html().match(/The Grind/)[0]).toEqual 'The Grind'
-      #(expect res.status).toEqual 200
-      asyncSpecDone()
-    asyncSpecWait()
-    app.close()
-
+  # describe 'index', ->
+  #   it 'be valid', ->
+  #     zombie.visit site, (err, browser, status) ->
+  #       (expect status).toEqual 200
+  #       asyncSpecDone()
+  #     asyncSpecWait()
+  describe 'new', ->
+    it 'should create project', ->
+      zombie.visit site, (err, browser, status) ->
+        browser.clickLink "Add Project", (err, browser, status) ->
+          browser.fill "Name", "Super Project"
+          browser.fill "Description", "Zombie Cool"
+          browser.fill "Owner", "Johnny"
+          browser.pressButton "Create", (err, browser, status) ->
+            console.log browser.html()
+            (expect browser.html().match(/super-project/).length).toEqual 1
+            asyncSpecDone()
+      asyncSpecWait()

@@ -1,4 +1,3 @@
-qs = require 'querystring'
 mate = require('coffeemate')
 
 mongo = require 'mongoskin'
@@ -7,24 +6,23 @@ db = mongo.db(process.env.MONGODB_URL || 'localhost:27017/grind')
 # models
 db.bind 'projects'
 db.projects.update_attributes = (id, data, callback) ->
-  @findById id, (err, project) ->
+  @findById id, (err, project) =>
     project.name = data.name
     project.description = data.description
     project.owner = data.owner
     @updateById project._id, project, (err) ->
       callback project
 db.projects.add_status = (id, status, callback) ->
-  @findById id, (err, project) ->
+  @findById id, (err, project) =>
     project.statuses ?= []
     project.statuses.unshift status
     @updateById project._id, project, (err) ->
       callback project
 
-#projects = require('./models').projects
-
 mate.basicAuth process.env.APIKEY, process.env.SECRETKEY if process.env.APIKEY? and process.env.SECRETKEY?
 mate.logger()
 mate.static __dirname + 'public'
+mate.bodyParser()
 
 mate
   .get '/', ->
@@ -33,27 +31,27 @@ mate
       @render 'views/index.coffee'
 
   .post '/projects', ->
-    project = qs.parse req.postdata.toString()
+    project = @req.body
     project.name = project.name.split(' ').join('-').toLowerCase()
     project.active = true
-    db.projects.insert project, (err) ->
+    db.projects.insert project, (err) =>
       @redirect '/'
 
-  .get '/projects/:id', ->
-    db.projects.findOne name: @req.params.name, (err, project) ->
+  .get '/projects/:name', ->
+    db.projects.findOne name: @req.params.name, (err, project) =>
+      @project = project
       @render 'views/projects.coffee'
 
   .post '/projects/:id', ->
-    data = qs.parse @req.postdata.toString()
-    db.projects.update_attributes @req.params.id, data, (project) ->
+    db.projects.update_attributes @req.params.id, @req.body, (project) =>
       @redirect "/projects/#{project.name}"
 
   .post '/projects/:id/statuses', ->
-    db.projects.findById @req.params.id, (err, project) ->
-      status = qs.parse @req.postdata.toString()
-      db.projects.add_status @req.params.id, status, (project) ->
+    db.projects.findById @req.params.id, (err, project) =>
+      db.projects.add_status @req.params.id, @req.body, (project) =>
         @redirect "/projects/#{project.name}"
 
 
   .listen process.env.VMC_APP_PORT || 8000
 
+module.exports = mate

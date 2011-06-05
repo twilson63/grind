@@ -2,7 +2,7 @@ div 'data-role': 'page', id: 'add-status', 'data-id': 'add-status',  ->
   div 'data-role': 'header', -> 
     h1 'Update Status'
   div 'data-role': 'content', ->
-    form action: "/projects/#{@_id}/statuses", method: 'post', ->
+    form action: "/projects/#{@project._id}/statuses", method: 'post', ->
       div 'data-role': 'fieldcontain', ->
         label for: 'description', -> 'Description'
         textarea name: 'description', id: 'description', placeholder: 'status details'

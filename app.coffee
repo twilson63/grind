@@ -1,8 +1,8 @@
-mongo = require 'mongoskin'
-db = mongo.db(process.env.MONGODB_URL || 'localhost:27017/grind')
 qs = require 'querystring'
 mate = require('coffeemate')
-sys = require('sys')
+
+mongo = require 'mongoskin'
+db = mongo.db(process.env.MONGODB_URL || 'localhost:27017/grind')
 
 # models
 db.bind 'projects'
@@ -20,16 +20,17 @@ db.projects.add_status = (id, status, callback) ->
     @updateById project._id, project, (err) ->
       callback project
 
+#projects = require('./models').projects
+
 mate.basicAuth process.env.APIKEY, process.env.SECRETKEY if process.env.APIKEY? and process.env.SECRETKEY?
 mate.logger()
 mate.static __dirname + 'public'
 
 mate
   .get '/', ->
-    # Get Projects
-    db.projects.find(active: true).toArray (err, items) ->
+    db.projects.find(active: true).toArray (err, items) =>
       @projects = items
-      @render 'index.coffeekup'
+      @render 'views/index.coffee'
 
   .post '/projects', ->
     project = qs.parse req.postdata.toString()
@@ -37,9 +38,11 @@ mate
     project.active = true
     db.projects.insert project, (err) ->
       @redirect '/'
+
   .get '/projects/:id', ->
     db.projects.findOne name: @req.params.name, (err, project) ->
-      @render 'projects.coffeekup'
+      @render 'views/projects.coffee'
+
   .post '/projects/:id', ->
     data = qs.parse @req.postdata.toString()
     db.projects.update_attributes @req.params.id, data, (project) ->
@@ -52,5 +55,5 @@ mate
         @redirect "/projects/#{project.name}"
 
 
-  .listen 8000
+  .listen process.env.VMC_APP_PORT || 8000
 

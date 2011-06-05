@@ -1,53 +1,44 @@
-div 'data-role': 'page', ->
-  div 'data-role': 'header', ->
-    a href: '/', 'data-ajax': false, -> 'Projects'
-    a href: '#edit', 'data-rel': 'dialog', -> 'Edit'
-    h1 "The Grind"
+doctype 5
+html ->
+  head ->
+    title 'The Grind'
+    meta charset: 'utf-8'
+    meta name: 'viewport', content:'width=device-width, minimum-scale=1, maximum-scale=1'
 
-  div 'data-role': 'content', ->
-    ul 'data-role': 'listview', ->
-      li 'data-role': 'list-divider', -> 'Name'
-      li -> @name
-      li 'data-role': 'list-divider', -> 'Owner'
-      li -> @owner
-      li 'data-role': 'list-divider', -> 'Description'
-      li -> @description
-      li 'data-role': 'list-divider', -> 'Timeline'
-      li ->
-        a href: '#add-status', 'data-rel': 'dialog', -> 'Add Status'
-      for status in @statuses || []
-        li ->
-          h4 status.stakeholder || 'unknown'
-          p status.description || 'N/A'
-          p status.report_date || 'unknown'
-div 'data-role': 'page', id: 'add-status', 'data-id': 'add-status',  ->
-  div 'data-role': 'header', -> 
-    h1 'Update Status'
-  div 'data-role': 'content', ->
-    form action: "/projects/#{@_id}/statuses", method: 'post', ->
-      div 'data-role': 'fieldcontain', ->
-        label for: 'description', -> 'Description'
-        textarea name: 'description', id: 'description', placeholder: 'status details'
-        label for: 'stakeholder', -> 'Stakeholder'
-        input type: 'text', name: 'stakeholder', placeholder: 'from stakeholder', id: 'stakeholder'
-        label for: 'report_date', -> 'Report Date'
-        input type: 'date', name: 'report_date', placeholder: 'date reported', id: 'report_date'
-      div 'data-role': 'fieldcontain', ->
-        input type: 'submit', value: 'Update Project Status'
+    meta(name: 'description', content: @description) if @description?
+    link(rel: 'canonical', href: @canonical) if @canonical?
 
-div 'data-role': 'page', id: 'edit', 'data-id': 'edit', ->
-  div 'data-role': 'header', ->
-    h1 'Edit Project'
-  div 'data-role': 'content', ->
-    form action: "/projects/#{@_id}", method: 'post', ->
-      div 'data-role': 'fieldcontain', ->
-        label for: 'name', -> 'Name'
-        input type: 'text', name: 'name', id: 'name', placeholder: 'project name', value: @name
-        label for: 'description', -> 'Description'
-        textarea name: 'description', id: 'description', placeholder: 'description', ->
-          @description
-        label for: 'owner', -> 'Owner'
-        input type: 'text', name: 'owner', id: 'owner', placeholder: 'project owner', value: @owner
-      div 'data-role': 'fieldcontain', ->
-        input type: 'submit', value: 'Update'
- 
+    link rel: 'icon', href: '/favicon.png'
+    link href: 'http://code.jquery.com/mobile/latest/jquery.mobile.min.css', rel: 'stylesheet', type: 'text/css'
+    script src: 'http://code.jquery.com/jquery-1.6.1.min.js'
+    coffeescript ->
+      # Reset new form
+      ($ '#add').live 'pagebeforeshow', -> ($ '#add form input, #add form textarea').val('')
+
+    script src: 'http://code.jquery.com/mobile/latest/jquery.mobile.min.js'
+
+  body ->
+    div 'data-role': 'page', ->
+      div 'data-role': 'header', ->
+        a href: '/', 'data-ajax': false, -> 'Projects'
+        a href: '#edit', 'data-rel': 'dialog', -> 'Edit'
+        h1 "The Grind"
+
+      div 'data-role': 'content', ->
+        ul 'data-role': 'listview', ->
+          li 'data-role': 'list-divider', -> 'Name'
+          li -> @name
+          li 'data-role': 'list-divider', -> 'Owner'
+          li -> @owner
+          li 'data-role': 'list-divider', -> 'Description'
+          li -> @description
+          li 'data-role': 'list-divider', -> 'Timeline'
+          li ->
+            a href: '#add-status', 'data-rel': 'dialog', -> 'Add Status'
+          for status in @statuses || []
+            li ->
+              h4 status.stakeholder || 'unknown'
+              p status.description || 'N/A'
+              p status.report_date || 'unknown'
+    include 'edit_project.coffee'
+    include 'add_project_status.coffee'

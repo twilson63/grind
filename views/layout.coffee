@@ -11,6 +11,10 @@ html ->
     link rel: 'icon', href: '/favicon.png'
     link href: 'http://code.jquery.com/mobile/latest/jquery.mobile.min.css', rel: 'stylesheet', type: 'text/css'
     script src: 'http://code.jquery.com/jquery-1.6.1.min.js'
+    coffeescript ->
+      # Reset new form
+      ($ '#add').live 'pagebeforeshow', -> ($ '#add form input, #add form textarea').val('')
+
     script src: 'http://code.jquery.com/mobile/latest/jquery.mobile.min.js'
 
   body ->

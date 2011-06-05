@@ -10,9 +10,7 @@ db.bind 'projects'
 
 opts=
   templateDir: 'views'
-  port: process.env.PORT 
-
-#|| Number(process.env.VMC_APP_PORT) || 8000
+  port: Number(process.env.VMC_APP_PORT) || 8000
 
 # Setup Template Engine
 coffeekup = require 'coffeekup'
@@ -37,9 +35,10 @@ meryl
           projects: items
   .post '/projects', (req, resp) ->
     project = req.body
+    project.name = project.name.split(' ').join('-').toLowerCase()
     project.active = true
     db.projects.insert project, (err) ->
-      resp.redirect '/'
+      resp.redirect "/"
 
   # Show Project
   .get '/projects/{name}', (req, resp) ->
@@ -61,6 +60,6 @@ meryl
       db.projects.updateById req.params.id, project, (err) ->
         resp.redirect "/projects/#{project.name}"
 
-  .run opts
+meryl.run opts unless module.parent?
 
 

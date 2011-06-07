@@ -9,7 +9,7 @@
     "coffee-script": ">= 1.x",
     "mongoskin": ">= 0.x",
     "coffeekup": ">= 0.x",
-    "coffeemate": "> 0.x","connect": ">= 1.x",
+    "coffeemate": ">= 0.0.3","connect": ">= 1.x",
     "log4js": ">= 0.2.5"
   },
   "engines": { "node": ">= 0.4.7" }

@@ -24,11 +24,15 @@ mate.logger()
 mate.static __dirname + 'public'
 mate.bodyParser()
 
+mate.context.view = (view)->
+  @view = "views/#{view}.coffee"
+  @render "views/layout.coffee"
+  
 mate
   .get '/', ->
     db.projects.find(active: true).toArray (err, items) =>
       @projects = items
-      @render 'views/index.coffee'
+      @view 'index'
 
   .post '/projects', ->
     project = @req.body
@@ -40,7 +44,7 @@ mate
   .get '/projects/:name', ->
     db.projects.findOne name: @req.params.name, (err, project) =>
       @project = project
-      @render 'views/projects.coffee'
+      @view 'projects'
 
   .post '/projects/:id', ->
     db.projects.update_attributes @req.params.id, @req.body, (project) =>

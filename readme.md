@@ -12,10 +12,9 @@ When a user logs in, they see a current timeline or latest statuses of
 all the projects they are following on the left, and a list of projects
 they are following on the right.
 
-Framework: meryl
+Framework: coffeemate
 Template: Coffeekup
 DataStore: MongoSkin
-
 
 # About
 
@@ -23,6 +22,7 @@ DataStore: MongoSkin
 
     brew install mongodb
     git clone git://github.com/twilson63/grind.git
+    cd grind
     npm install .
     coffee app.coffee
 
@@ -44,4 +44,3 @@ See LICENSE
 # Contributors
 
 Tom Wilson (Author)
-

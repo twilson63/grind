@@ -21,7 +21,7 @@ db.projects.add_status = (id, status, callback) ->
 
 mate.basicAuth process.env.APIKEY, process.env.SECRETKEY if process.env.APIKEY? and process.env.SECRETKEY?
 mate.logger()
-mate.static __dirname + 'public'
+mate.static __dirname + '/public'
 mate.bodyParser()
 
 mate
@@ -29,6 +29,11 @@ mate
     db.projects.find(active: true).toArray (err, items) =>
       @projects = items
       @render 'views/index.coffee'
+
+  .get '/projects', ->
+    db.projects.find(active: true).toArray (err, projects) =>
+      @resp.writeHead 200, 'Content-Type': 'application/json'
+      @resp.end JSON.stringify projects
 
   .post '/projects', ->
     project = @req.body
@@ -42,9 +47,9 @@ mate
       @project = project
       @render 'views/projects.coffee'
 
-  .post '/projects/:id', ->
+  .put '/projects/:id', ->
     db.projects.update_attributes @req.params.id, @req.body, (project) =>
-      @redirect "/projects/#{project.name}"
+      @resp.end JSON.stringify project
 
   .post '/projects/:id/statuses', ->
     db.projects.findById @req.params.id, (err, project) =>
@@ -52,6 +57,5 @@ mate
         @redirect "/projects/#{project.name}"
 
 
-  .listen process.env.VMC_APP_PORT || 8000
-
-module.exports = mate
+#  .listen process.env.VMC_APP_PORT || 3000
+mate.listen 3000

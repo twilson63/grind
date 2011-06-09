@@ -12,7 +12,7 @@ When a user logs in, they see a current timeline or latest statuses of
 all the projects they are following on the left, and a list of projects
 they are following on the right.
 
-Framework: meryl
+Framework: Coffeemate
 Template: Coffeekup
 DataStore: MongoSkin
 

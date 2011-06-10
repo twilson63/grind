@@ -11,13 +11,31 @@ html ->
     link rel: 'icon', href: '/favicon.png'
     link href: 'http://code.jquery.com/mobile/latest/jquery.mobile.min.css', rel: 'stylesheet', type: 'text/css'
     script src: 'http://code.jquery.com/jquery-1.6.1.min.js'
+    script src: '/jquery.formparams.min.js'
 
     coffeescript ->
       $(document).bind 'mobileinit', ->
         $.mobile.ajaxEnabled = false
-        console.log 'Ready'
         window.models = []
         window.current_model = null
+
+        update_project = ->
+          console.log current_model
+          $.ajax
+            type: 'PUT'
+            url: "/projects/#{current_model._id}"
+            contentType: 'application/json'
+            data: JSON.stringify(current_model)
+        
+        add_status_to_project = (status) ->
+          url = "/projects/#{window.current_model._id}/statuses"
+          #$.postJSON(url, status).then (data) ->
+          #  alert 'hello'
+          $.ajax
+            type: 'POST'
+            url: url
+            contentType: 'application/json'
+            data: JSON.stringify(status)
 
         project_home_view =
           render: ->
@@ -55,22 +73,22 @@ html ->
             $.mobile.changePage('#edit','slideup')
           save: ->
             prj = window.current_model
-            prj.name = $('#edit_name', '#edit').val()
-            prj.description = $('#edit_description', '#edit').val()
-            prj.owner = $('#edit_owner', '#edit').val()
-
-            ($.ajax
-              type: 'PUT'
-              url: "/projects/#{prj._id}"
-              contentType: 'application/json'
-              data: JSON.stringify(prj)).then (project) ->
-              alert 'saved'
-              console.log project
+            data = $('#edit form').formParams()
+            prj.name = data.name
+            prj.description = data.description
+            prj.owner = data.owner
+            update_project()
 
         project_status_new_view =
           render: ->
             prj = window.current_model
             $.mobile.changePage('#add_status','slideup')
+          save: ->
+            prj = window.current_model
+            prj.statuses ?= []
+            status = $('#add_status form').formParams()
+            prj.statuses.unshift status
+            add_status_to_project status
 
         $('#home').live 'pageshow', (event, ui) ->
           $('#projects-container').html """
@@ -129,12 +147,14 @@ html ->
           return false
 
         $('#add_status form').live 'submit', ->
-          alert 'do nothing'
+          project_status_new_view.save()
+          project_show_view.render()
           return false
 
         $('#new a[data-action=cancel]').live 'click', ->
           project_home_view.render()
           return false
+
         $('#new form').live 'submit', ->
           project_new_view.save()
           project_home_view.render()

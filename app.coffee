@@ -47,6 +47,7 @@ mate
 
   .put '/projects/:id', ->
     db.projects.update_attributes @req.params.id, @req.body, (project) =>
+      console.log JSON.stringify project
       @resp.end JSON.stringify project
 
   .post '/projects/:id/statuses', ->

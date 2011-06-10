@@ -11,7 +11,7 @@ div 'data-role': 'page', id: 'add_status', 'data-id': 'add_status',  ->
         label for: 'status_report_date', -> 'Report Date'
         input type: 'date', name: 'report_date', placeholder: 'date reported', id: 'status_report_date'
       div 'data-role': 'fieldcontain', ->
-        input type: 'submit', value: 'Update Project Status'
+        button 'Update Project Status'
         a href: '#show', 'data-role': 'button', -> 'Cancel'
 
 

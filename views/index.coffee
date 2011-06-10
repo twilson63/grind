@@ -81,7 +81,7 @@ html ->
 
         project_status_new_view =
           render: ->
-            prj = window.current_model
+            $('#add_status :input').val('')
             $.mobile.changePage('#add_status','slideup')
           save: ->
             prj = window.current_model
@@ -90,6 +90,7 @@ html ->
             prj.statuses.unshift status
             add_status_to_project status
 
+        # -------  Page Show Events -------------------
         $('#home').live 'pageshow', (event, ui) ->
           $('#projects-container').html """
             <ul id="projects-list" data-role="listview" data-insert="true" data-filter="true">
@@ -100,6 +101,8 @@ html ->
             $.each data, (i, prj) ->
               $('#projects-container ul').append "<li><a href='#' data-id='#{prj._id}'>#{prj.name}</a></li>"
             $('#projects-list').listview()
+
+
         $('#show').live 'pageshow', (event, ui) ->
           prj = window.current_model
           $('#status-container').html """
@@ -114,6 +117,7 @@ html ->
               status_list.append "<li>#{status.description}</li>"
             status_list.listview()
 
+        # -----------  Events -----------------------
         $('#show a[data-action=add_status]').live 'click', ->
           project_status_new_view.render()
 

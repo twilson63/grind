@@ -56,4 +56,4 @@ mate
         @resp.end JSON.stringify project
 
 #  .listen process.env.VMC_APP_PORT || 3000
-mate.listen 3000
+mate.listen process.env.VMC_APP_PORT || 3000

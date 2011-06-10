@@ -49,12 +49,13 @@ html ->
             $('#new_description', '#new').val('')
             $.mobile.changePage('#new','slideup')
           save: ->
-            prj =
-              name: $('#new_name', '#show').val()
-              description: $('#new_description', '#new').val()
-              owner: $('#new_owner', '#new').val()
-            ($.postJSON '/projects', prj).then (data) ->
-              project_home_view.render()
+            prj = $('#new form').formParams()
+            ($.ajax
+              type: 'POST'
+              url: '/projects'
+              contentType: 'application/json'
+              data: JSON.stringify(prj)).then ->
+                project_home_view.render()
 
         project_show_view = 
           render: ->
@@ -149,6 +150,7 @@ html ->
         $('#edit form').live 'submit', ->
           # write data to current model
           project_edit_view.save()
+          project_show_view.render()
           return false
 
         $('#add_status form').live 'submit', ->

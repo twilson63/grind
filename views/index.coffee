@@ -7,7 +7,6 @@ html ->
 
     meta(name: 'description', content: @description) if @description?
     meta name: 'apple-mobile-web-app-capable', content: 'yes'
-    meta name: 'apple-mobile-web-app-status-bar-style', content: 'black'
     link(rel: 'canonical', href: @canonical) if @canonical?
 
     link rel: 'icon', href: '/favicon.png'
@@ -21,6 +20,7 @@ html ->
         window.models = []
         window.current_model = null
 
+        # ---- Utility Methods
         update_project = ->
           console.log current_model
           $.ajax
@@ -31,14 +31,13 @@ html ->
         
         add_status_to_project = (status) ->
           url = "/projects/#{window.current_model._id}/statuses"
-          #$.postJSON(url, status).then (data) ->
-          #  alert 'hello'
           $.ajax
             type: 'POST'
             url: url
             contentType: 'application/json'
             data: JSON.stringify(status)
 
+        # ---- views
         project_home_view =
           render: ->
             $.mobile.changePage('#home','slidedown')
@@ -180,3 +179,4 @@ html ->
     include 'views/show.coffee'
     include 'views/edit_project.coffee'
     include 'views/add_project_status.coffee'
+

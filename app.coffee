@@ -24,10 +24,11 @@ mate.logger()
 mate.static __dirname + '/public'
 mate.bodyParser()
 
-#mate.context.view = (view)->
-#  @view = "views/#{view}.coffee"
+
+
+mate.context.view = (view)->
+  @view = "views/#{view}.coffee"
 #  @render "views/layout.coffee"
-  
 mate
   .get '/', ->
     db.projects.find(active: true).toArray (err, items) =>

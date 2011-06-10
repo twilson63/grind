@@ -6,6 +6,8 @@ html ->
     meta name: 'viewport', content:'width=device-width, minimum-scale=1, maximum-scale=1'
 
     meta(name: 'description', content: @description) if @description?
+    meta name: 'apple-mobile-web-app-capable', content: 'yes'
+    meta name: 'apple-mobile-web-app-status-bar-style', content: 'black'
     link(rel: 'canonical', href: @canonical) if @canonical?
 
     link rel: 'icon', href: '/favicon.png'

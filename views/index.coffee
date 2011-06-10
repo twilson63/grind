@@ -91,13 +91,13 @@ html ->
 
           status_list = $('ul#status-list', '#show div[data-role=content]')
           status_list.empty()
-          
           if prj.statuses?
             $.each prj.statuses, (i, status) ->
               status_list.append "<li>#{status.description}</li>"
             status_list.listview()
 
-
+        $('#show a[data-action=add_status]').live 'click', ->
+          project_status_new_view.render()
 
         $('#home a[data-action=new]').live 'click', ->
           project_new_view.render()

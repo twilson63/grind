@@ -43,9 +43,6 @@ html ->
             $('#show_name', '#show div[data-role=content]').html(prj.name)
             $('#owner', '#show div[data-role=content]').html(prj.owner)
             $('#description', '#show div[data-role=content]').html(prj.description)
-            if prj.statuses?
-              $.each prj.statuses, (i, status) ->
-                $('ul', '#show div[data-role=content]').append "<li>#{status.description}</li>"
             $.mobile.changePage('#show','slideup')
 
         project_edit_view =
@@ -70,6 +67,11 @@ html ->
               alert 'saved'
               console.log project
 
+        project_status_new_view =
+          render: ->
+            prj = window.current_model
+            $.mobile.changePage('#add_status','slideup')
+
         $('#home').live 'pageshow', (event, ui) ->
           $('#projects-container').html """
             <ul id="projects-list" data-role="listview" data-insert="true" data-filter="true">
@@ -80,6 +82,22 @@ html ->
             $.each data, (i, prj) ->
               $('#projects-container ul').append "<li><a href='#' data-id='#{prj._id}'>#{prj.name}</a></li>"
             $('#projects-list').listview()
+        $('#show').live 'pageshow', (event, ui) ->
+          prj = window.current_model
+          $('#status-container').html """
+            <ul id="status-list" data-role="listview" data-insert="true" >
+            </ul>
+          """
+
+          status_list = $('ul#status-list', '#show div[data-role=content]')
+          status_list.empty()
+          
+          if prj.statuses?
+            $.each prj.statuses, (i, status) ->
+              status_list.append "<li>#{status.description}</li>"
+            status_list.listview()
+
+
 
         $('#home a[data-action=new]').live 'click', ->
           project_new_view.render()
@@ -131,4 +149,4 @@ html ->
     include 'views/new.coffee'
     include 'views/show.coffee'
     include 'views/edit_project.coffee'
-    #include 'views/add_project_status.coffee'
+    include 'views/add_project_status.coffee'

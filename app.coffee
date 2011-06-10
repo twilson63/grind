@@ -24,10 +24,13 @@ mate.logger()
 mate.static __dirname + '/public'
 mate.bodyParser()
 
+#mate.context.view = (view)->
+#  @view = "views/#{view}.coffee"
+#  @render "views/layout.coffee"
+  
 mate
   .get '/', ->
     db.projects.find(active: true).toArray (err, items) =>
-      @projects = items
       @render 'views/index.coffee'
 
   .get '/projects', ->
@@ -42,11 +45,6 @@ mate
     db.projects.insert project, (err) =>
       @redirect '/'
 
-  .get '/projects/:name', ->
-    db.projects.findOne name: @req.params.name, (err, project) =>
-      @project = project
-      @render 'views/projects.coffee'
-
   .put '/projects/:id', ->
     db.projects.update_attributes @req.params.id, @req.body, (project) =>
       @resp.end JSON.stringify project
@@ -54,8 +52,7 @@ mate
   .post '/projects/:id/statuses', ->
     db.projects.findById @req.params.id, (err, project) =>
       db.projects.add_status @req.params.id, @req.body, (project) =>
-        @redirect "/projects/#{project.name}"
-
+        @resp.end JSON.stringify project
 
 #  .listen process.env.VMC_APP_PORT || 3000
 mate.listen 3000

@@ -128,6 +128,10 @@ html ->
           project_edit_view.save()
           return false
 
+        $('#add_status form').live 'submit', ->
+          alert 'do nothing'
+          return false
+
         $('#new a[data-action=cancel]').live 'click', ->
           project_home_view.render()
           return false

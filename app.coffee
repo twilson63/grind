@@ -43,7 +43,7 @@ mate
     project.name = project.name.split(' ').join('-').toLowerCase()
     project.active = true
     db.projects.insert project, (err) =>
-      @redirect '/'
+      @resp.end JSON.stringify project
 
   .put '/projects/:id', ->
     db.projects.update_attributes @req.params.id, @req.body, (project) =>

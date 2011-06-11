@@ -22,6 +22,12 @@ db.projects.add_status = (id, status, callback) ->
       callback project
 
 mate.basicAuth process.env.APIKEY, process.env.SECRETKEY if process.env.APIKEY? and process.env.SECRETKEY?
+#mate.cookieDecoder()
+#mate.session
+#  secret: 'GooGooGaGa'
+#  store: mate.session.MemoryStory 
+#    reapInterval: -1
+
 mate.logger()
 mate.static __dirname + '/public'
 mate.bodyParser()

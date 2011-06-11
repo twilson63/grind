@@ -69,9 +69,16 @@ coffeescript ->
         # render events
         $('#show').live 'pagebeforeshow', @pagebeforeshow
         # bind to events
-        $(@NEW_STATUS).live 'click', -> $.mobile.changePage '#status_new', 'pop'
-        $(@EDIT_BTN).live 'click', -> $.mobile.changePage '#edit', 'slideup'
-        $(@HOME_BTN).live 'click', -> $.mobile.changePage('#home','slidedown')
+        $(@NEW_STATUS).live 'click', -> 
+          $.mobile.changePage '#status_new', 'pop'
+          false
+        $(@EDIT_BTN).live 'click', -> 
+          $.mobile.changePage '#edit', 'slideup'
+          false
+
+        $(@HOME_BTN).live 'click', -> 
+          $.mobile.changePage '#home','slidedown'
+          false
 
     class ProjectEditView
       CANCEL_BTN: '#edit a[data-action=cancel]'

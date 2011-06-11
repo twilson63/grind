@@ -20,153 +20,148 @@ html ->
         window.models = []
         window.current_model = null
 
-        # ---- Utility Methods
-        update_project = ->
-          console.log current_model
-          $.ajax
-            type: 'PUT'
-            url: "/projects/#{current_model._id}"
-            contentType: 'application/json'
-            data: JSON.stringify(current_model)
-        
-        add_status_to_project = (status) ->
-          url = "/projects/#{window.current_model._id}/statuses"
-          $.ajax
-            type: 'POST'
-            url: url
-            contentType: 'application/json'
-            data: JSON.stringify(status)
-
         # ---- views
-        project_home_view =
-          render: ->
-            $.mobile.changePage('#home','slidedown')
+        class ProjectHomeView
+          NEW_BUTTON: '#home a[data-action=new]'
+          render: (data) ->
+            window.models = data
+            $('#projects-container').html """
+              <ul id="projects-list" data-role="listview" data-insert="true" data-filter="true">
+              </ul>
+            """
+            $.each data, (i, prj) ->
+              $('#projects-container ul').append "<li><a href='#' data-id='#{prj._id}'>#{prj.name}</a></li>"
+            $('#projects-list').listview()
+            $('#projects-list li a').live 'click', @show_project
+          pageshow: (event, ui) ->
+            $.getJSON('/projects').then (data) -> project_home_view.render data
+          show_project: ->
+            id = $(this).attr('data-id')
+            $.each window.models, (i, prj) ->
+              if prj._id == id
+                window.current_model = prj
+                $.mobile.changePage '#show', 'slideup'
+          constructor: ->
+            # -------  Page Home Events -------------------
+            $('#home').live 'pageshow', @pageshow
+            $(@NEW_BUTTON).live 'click', -> $.mobile.changePage '#new', 'slideup'
 
-        project_new_view =
-          render: ->
-            $('#new_name', '#show').val('')
+        class ProjectNewView
+          CANCEL_BTN: '#new a[data-action=cancel]'
+          pagebeforeshow: (event, ui) ->
+            $('#new_name', '#new').val('')
             $('#new_owner', '#new').val('')
             $('#new_description', '#new').val('')
-            $.mobile.changePage('#new','slideup')
-          save: ->
+          submit: ->
             prj = $('#new form').formParams()
             ($.ajax
               type: 'POST'
               url: '/projects'
               contentType: 'application/json'
               data: JSON.stringify(prj)).then ->
-                project_home_view.render()
+              $.mobile.changePage '#home', 'slidedown'
+            false
+          constructor: ->
+            $('#new').live 'pagebeforeshow', @pagebeforeshow
+            $(@CANCEL_BTN).live 'click', -> $.mobile.changePage '#home', 'slidedown'
+            $('#new form').live 'submit', @submit
 
-        project_show_view = 
-          render: ->
+        class ProjectShowView
+          HOME_BTN: '#show a[data-action=home]'
+          EDIT_BTN: '#show a[data-action=edit]'
+          NEW_STATUS: '#show a[data-action=add_status]'
+          pagebeforeshow: (event, ui) ->
+            content = '#show div[data-role=content]'
             prj = window.current_model
-            $('#show_name', '#show div[data-role=content]').html(prj.name)
-            $('#owner', '#show div[data-role=content]').html(prj.owner)
-            $('#description', '#show div[data-role=content]').html(prj.description)
-            $.mobile.changePage('#show','slideup')
+            $('#show_name', content).html(prj.name)
+            $('#owner', content).html(prj.owner)
+            $('#description', content).html(prj.description)
+          pageshow: (event, ui) ->
+            prj = window.current_model
+            # Does this need to be a microview???
+            $('#status-container', '#show').html """
+              <ul id="status-list" data-role="listview" data-insert="true" >
+              </ul>
+            """
+            status_list = $('ul#status-list', '#show div[data-role=content]')
+            status_list.empty()
+            if prj.statuses?
+              $.each prj.statuses, (i, status) ->
+                status_list.append "<li>#{status.description}</li>"
+              status_list.listview()
 
-        project_edit_view =
-          render: ->
+          constructor: ->
+            # render events
+            $('#show').live 'pagebeforeshow', @pagebeforeshow
+            $('#show').live 'pageshow', @pageshow
+            # bind to events
+            $(@NEW_STATUS).live 'click', -> $.mobile.changePage '#status_new', 'pop'
+            $(@EDIT_BTN).live 'click', -> $.mobile.changePage '#edit', 'slideup'
+            $(@HOME_BTN).live 'click', -> $.mobile.changePage('#home','slidedown')
+
+        class ProjectEditView
+          CANCEL_BTN: '#edit a[data-action=cancel]'
+          pagebeforeshow: (event, ui) ->
             prj = window.current_model
             $('#edit_name', '#edit').val(prj.name)
             $('#edit_description', '#edit').val(prj.description)
             $('#edit_owner', '#edit').val(prj.owner)
-            $('form', '#edit').attr('href', "/projects/#{prj._id}")
-            $.mobile.changePage('#edit','slideup')
-          save: ->
-            prj = window.current_model
-            data = $('#edit form').formParams()
-            prj.name = data.name
-            prj.description = data.description
-            prj.owner = data.owner
-            update_project()
+            #$('form', '#edit').attr('action', "/projects/#{prj._id}")
 
-        project_status_new_view =
-          render: ->
-            $('#add_status :input').val('')
-            $.mobile.changePage('#add_status','slideup')
-          save: ->
-            prj = window.current_model
-            prj.statuses ?= []
-            status = $('#add_status form').formParams()
-            prj.statuses.unshift status
-            add_status_to_project status
-
-        # -------  Page Show Events -------------------
-        $('#home').live 'pageshow', (event, ui) ->
-          $('#projects-container').html """
-            <ul id="projects-list" data-role="listview" data-insert="true" data-filter="true">
-            </ul>
-          """
-          $.getJSON('/projects').then (data) ->
-            window.models = data
-            $.each data, (i, prj) ->
-              $('#projects-container ul').append "<li><a href='#' data-id='#{prj._id}'>#{prj.name}</a></li>"
-            $('#projects-list').listview()
-
-
-        $('#show').live 'pageshow', (event, ui) ->
-          prj = window.current_model
-          $('#status-container').html """
-            <ul id="status-list" data-role="listview" data-insert="true" >
-            </ul>
-          """
-
-          status_list = $('ul#status-list', '#show div[data-role=content]')
-          status_list.empty()
-          if prj.statuses?
-            $.each prj.statuses, (i, status) ->
-              status_list.append "<li>#{status.description}</li>"
-            status_list.listview()
-
-        # -----------  Events -----------------------
-        $('#show a[data-action=add_status]').live 'click', ->
-          project_status_new_view.render()
-
-        $('#home a[data-action=new]').live 'click', ->
-          project_new_view.render()
-          return false
-        
-        $('#projects-container a').live 'click', ->
-          id = $(this).attr('data-id')
-          $.each window.models, (i, prj) ->
-            if prj._id == id
+          constructor: ->
+            $('#edit').live 'pagebeforeshow', @pagebeforeshow
+            $(@CANCEL_BTN).live 'click', -> $.mobile.changePage '#show', 'slidedown'
+            # For some reason only works when nested...
+            $('#edit form').live 'submit', ->  
+              prj = window.current_model
+              data = $('#edit form').formParams()
+              prj.name = data.name
+              prj.description = data.description
+              prj.owner = data.owner
+              $.ajax
+                type: 'PUT'
+                url: "/projects/#{prj._id}"
+                contentType: 'application/json'
+                data: JSON.stringify(prj)
               window.current_model = prj
-              project_show_view.render()
-          return false
+              $.mobile.changePage '#show', 'slidedown'
+              false
 
-        $('#show a[data-action=edit]').live 'click', ->
-          project_edit_view.render()
-          return false
 
-        $('#show a[data-action=home]').live 'click', ->
-          project_home_view.render()
-          return false
+        class StatusNewView
+          CANCEL_BTN: ''
+          pagebeforeshow: (event, ui) ->
+            $('#status_new :input').val('')
+            $("#status_new texarea").text('')
 
-        $('#edit a[data-action=cancel]').live 'click', ->
-          project_show_view.render()
-          return false
+          constructor: ->
+            # bind render events
+            $('#status_new').live 'pagebeforeshow', @pagebeforeshow
+            # bind dom events
+            $(@CANCEL_BTN).live 'click', -> $.mobile.changePage '#show', 'slidedown'
+            $("#status_new form").live 'submit', -> 
+              prj = window.current_model
+              prj.statuses ?= []
+              status = $("#status_new form").formParams()
+              prj.statuses.unshift status
+              window.current_model = prj
+              $.ajax
+                type: 'POST'
+                url: "/projects/#{window.current_model._id}/statuses"
+                contentType: 'application/json'
+                data: JSON.stringify(status)
+              $.mobile.changePage '#show', 'slidedown'
+              false
 
-        $('#edit form').live 'submit', ->
-          # write data to current model
-          project_edit_view.save()
-          project_show_view.render()
-          return false
 
-        $('#add_status form').live 'submit', ->
-          project_status_new_view.save()
-          project_show_view.render()
-          return false
+        # ----------- Init Classes -----------------------
+        project_home_view = new ProjectHomeView
+        project_show_view = new ProjectShowView
+        project_new_view = new ProjectNewView
+        project_edit_view = new ProjectEditView
+        status_new_view = new StatusNewView
 
-        $('#new a[data-action=cancel]').live 'click', ->
-          project_home_view.render()
-          return false
-
-        $('#new form').live 'submit', ->
-          project_new_view.save()
-          project_home_view.render()
-          return false
-
+        true
     script src: 'http://code.jquery.com/mobile/latest/jquery.mobile.min.js'
   body ->
     div id: 'home', 'data-role': 'page', ->
@@ -179,6 +174,6 @@ html ->
 
     include 'views/new.coffee'
     include 'views/show.coffee'
-    include 'views/edit_project.coffee'
-    include 'views/add_project_status.coffee'
+    include 'views/edit.coffee'
+    include 'views/status_new.coffee'
 

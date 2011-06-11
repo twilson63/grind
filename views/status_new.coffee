@@ -1,4 +1,4 @@
-div 'data-role': 'page', id: 'add_status', 'data-id': 'add_status',  ->
+div 'data-role': 'page', id: 'status_new', 'data-id': 'status_new',  ->
   div 'data-role': 'header', -> 
     h1 'Update Status'
   div 'data-role': 'content', ->

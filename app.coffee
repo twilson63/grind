@@ -15,7 +15,9 @@ db.projects.update_attributes = (id, data, callback) ->
 db.projects.add_status = (id, status, callback) ->
   @findById id, (err, project) =>
     project.statuses ?= []
+    status.id = project.statuses.length + 1
     project.statuses.unshift status
+
     @updateById project._id, project, (err) ->
       callback project
 

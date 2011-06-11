@@ -21,5 +21,15 @@ describe 'app', ->
       expect(result._id).toBeDefined()
       asyncSpecDone()
     asyncSpecWait()
+  it 'POST /projects/:id/statuses', ->
+    new_prj = 
+      name: 'status'
+    api.projects.post new_prj, (err, result) ->
+      status = name: 'update me'
+      api.projects[result._id].statuses.post status, (err, result) ->
+        console.log result
+        expect(result.statuses[0].id).toEqual(1)
 
+        asyncSpecDone()
+    asyncSpecWait()
 

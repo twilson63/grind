@@ -1,3 +1,4 @@
+#coffeekup = require('coffeekup')
 mate = require('coffeemate')
 mongo = require 'mongoskin'
 db = mongo.db(process.env.MONGODB_URL || 'localhost:27017/grind')
@@ -24,7 +25,14 @@ db.projects.add_status = (id, status, callback) ->
     @updateById project._id, project, (err) ->
       callback project
 
-mate.basicAuth process.env.APIKEY, process.env.SECRETKEY if process.env.APIKEY? and process.env.SECRETKEY?
+# mate.options.renderExt = '.coffee'
+# mate.options.renderDir = 'views'
+
+# # bind coffeekup explicitly
+# mate.options.renderFunc = (tmpl, ctx) ->
+#   coffeekup.render tmpl, context: ctx
+
+#mate.basicAuth process.env.APIKEY, process.env.SECRETKEY if process.env.APIKEY? and process.env.SECRETKEY?
 mate.cookieParser()
 mate.session secret: 'wilburwonderdog'
 
@@ -41,8 +49,15 @@ mate.use (req, resp, next) ->
   else
     next()
 
-#mate.context.view = (view)->
-#  @view = "views/#{view}.coffee"
+mate.context.send_json = (data) ->
+  @resp.writeHead 200, 'Content-Type': 'application/json'
+  @resp.end JSON.stringify data
+
+mate.context.send_text = (data) ->
+  @resp.writeHead 200, 'Content-Type': 'text'
+  @resp.end data
+
+
 
 mate
   .get '/', ->
@@ -51,24 +66,23 @@ mate
 
   .get '/projects', ->
     db.projects.find(active: true).toArray (err, projects) =>
-      @resp.writeHead 200, 'Content-Type': 'application/json'
-      @resp.end JSON.stringify projects
+      @send_json projects
 
    .post '/projects', ->
     project = @req.body
     project.name = project.name.split(' ').join('-').toLowerCase()
     project.active = true
     db.projects.insert project, (err) =>
-      @resp.end JSON.stringify project
+      @send_json project
 
   .put '/projects/:id', ->
     db.projects.update_attributes @req.params.id, @req.body, (project) =>
-      @resp.end JSON.stringify project
+      @send_json project
 
   .post '/projects/:id/statuses', ->
     db.projects.findById @req.params.id, (err, project) =>
       db.projects.add_status @req.params.id, @req.body, (project) =>
-        @resp.end JSON.stringify project
+        @send_json project
 
   # users
   .post '/users', ->
@@ -80,14 +94,14 @@ mate
         password_hash: enc.hash
         password_xxx: enc.xx
       db.users.insert @req.body, (err, user) ->
-        @resp.end JSON.stringify user
+        @send_json user
   
   .put '/users/:id', ->
     if @req.session.isAdmin? or @req.session._id is @req.params.id
       db.users.findById @req.params._id, (err, user) ->
         [user.email, user.username] = [@req.body.email, @req.body.username]
         db.users.updateById @req.params_id, user, (err, user) ->
-          @resp.end JSON.stringigy user
+          @send_json user
   
   # sessions
   .post '/sessions', ->
@@ -98,10 +112,10 @@ mate
     #    @resp.end '401 Authorization Denied'
     #  else
     @req.session.authenticated = true
-    @resp.writeHead 200, 'Content-Type': 'text'
-    @resp.end 'ok'
+    @send_text 'ok'
+
 
 
 mate.listen process.env.VMC_APP_PORT || 3000
 
-console.log mate.middleware
+console.log 'listening...'

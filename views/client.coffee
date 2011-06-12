@@ -9,19 +9,33 @@ coffeescript ->
     window.current_model = null
 
     # ---- views
+    class LoginView
+      constructor: ->
+        $('#login').live 'pagebeforeshow', ->
+          auth = window.localStorage.getItem('authorized')
+          if auth? and auth == 'true'
+            $.mobile.changePage '#home', 'slideup'
+
+        $('#login form').live 'submit', ->
+          $.post('/sessions').then (err) ->
+            window.localStorage.setItem 'authorized', "true"
+            $.mobile.changePage '#home', 'slideup'
+          false
+
     class ProjectHomeView
       NEW_BUTTON: '#home a[data-action=new]'
-      render: (data) ->
-        window.models = data
-        @source ?= $('#project-list').html()
-        @template ?= Handlebars.compile(@source)
-        html = @template projects: data
-        $('#projects-container').html(html)
-        $('#projects-container ul').listview()
-        $('#projects-container li a').live 'click', @show_project
-
       pageshow: (event, ui) ->
-        $.getJSON('/projects').then (data) -> project_home_view.render data
+        $.getJSON('/projects')
+          .then (data) -> 
+            window.models = data
+            @source ?= $('#project-list').html()
+            @template ?= Handlebars.compile(@source)
+            html = @template projects: data
+            $('#projects-container').html(html)
+            $('#projects-container ul').listview()
+          .fail (err) ->
+            window.localStorage.setItem 'authorized', 'false'
+            $.mobile.changePage '#login', 'slidedown'
       show_project: ->
         id = $(this).attr('data-id')
         $.each window.models, (i, prj) ->
@@ -33,6 +47,8 @@ coffeescript ->
         # -------  Page Home Events -------------------
         $('#home').live 'pageshow', @pageshow
         $(@NEW_BUTTON).live 'click', -> $.mobile.changePage '#new', 'slideup'
+        $('#projects-container li a').live 'click', @show_project
+
 
     class ProjectNewView
       CANCEL_BTN: '#new a[data-action=cancel]'
@@ -72,6 +88,7 @@ coffeescript ->
         $(@NEW_STATUS).live 'click', -> 
           $.mobile.changePage '#status_new', 'pop'
           false
+
         $(@EDIT_BTN).live 'click', -> 
           $.mobile.changePage '#edit', 'slideup'
           false
@@ -91,7 +108,10 @@ coffeescript ->
 
       constructor: ->
         $('#edit').live 'pagebeforeshow', @pagebeforeshow
-        $(@CANCEL_BTN).live 'click', -> $.mobile.changePage '#show', 'slidedown'
+        $(@CANCEL_BTN).live 'click', -> 
+          $.mobile.changePage '#show', 'slidedown'
+          false
+
         # For some reason only works when nested...
         $('#edit form').live 'submit', ->  
           prj = window.current_model
@@ -126,6 +146,7 @@ coffeescript ->
 
 
     # ----------- Init Classes -----------------------
+    login = new LoginView
     project_home_view = new ProjectHomeView
     project_show_view = new ProjectShowView
     project_new_view = new ProjectNewView

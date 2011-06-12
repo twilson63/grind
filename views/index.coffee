@@ -15,14 +15,8 @@ html ->
     include 'views/client.coffee'
 
   body ->
-    div id: 'home', 'data-role': 'page', ->
-      div 'data-role': 'header', ->
-        h1 'The Grind'
-        a href: '#', 'data-action': 'new', -> 'Add'
-      div 'data-role': 'content', ->
-        span id: 'projects-container', ->
-          "Loading Please Wait..."
-
+    include 'views/login.coffee'
+    include 'views/home.coffee'
     include 'views/new.coffee'
     include 'views/show.coffee'
     include 'views/edit.coffee'

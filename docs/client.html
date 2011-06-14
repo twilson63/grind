@@ -1,0 +1,188 @@
+<!DOCTYPE html>  <html> <head>   <title>client.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="client.html">                 client.coffee               </a>                                           <a class="source" href="edit.html">                 edit.coffee               </a>                                           <a class="source" href="home.html">                 home.coffee               </a>                                           <a class="source" href="index.html">                 index.coffee               </a>                                           <a class="source" href="login.html">                 login.coffee               </a>                                           <a class="source" href="new.html">                 new.coffee               </a>                                           <a class="source" href="show.html">                 show.coffee               </a>                                           <a class="source" href="signup.html">                 signup.coffee               </a>                                           <a class="source" href="status_new.html">                 status_new.coffee               </a>                                           <a class="source" href="templates.html">                 templates.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               client.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Load jQuery from cdn</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">script</span> <span class="nv">src: </span><span class="s1">&#39;http://code.jquery.com/jquery-1.6.1.min.js&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Load Handlebars locally, should be on cdn soon :)</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">script</span> <span class="nv">src: </span><span class="s1">&#39;/handlebars.1.0.0.beta.3.js&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Load Form Params Plug In</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">script</span> <span class="nv">src: </span><span class="s1">&#39;/jquery.formparams.min.js&#39;</span>
+
+<span class="nx">coffeescript</span> <span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h1>jQueryMobile Document Ready Handler</h1>
+
+<p>InOrder to correctly bind to jQuery Mobile Events
+You need to use the mobileinit event and not the 
+document ready event.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">bind</span> <span class="s1">&#39;mobileinit&#39;</span><span class="p">,</span> <span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h1>Disable jQueryMobile ajax</h1>
+
+<p>we want to control the flow of our application
+to and from our server.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">$.mobile.ajaxEnabled = </span><span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h1>A simple cache for all of our projects</h1>
+
+<p>Would like to move this to lawnchair at
+some point.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nb">window</span><span class="p">.</span><span class="nv">models = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h1>Current Project</h1>
+
+<p>A global variable to maintain the current project
+Is this the best way to manage this or is it better
+to pass it around from view to view?</p>
+
+<p>Currently, it seems to be the right approach, again
+we could add it and the views to an app object then
+add the app object to the global space.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nb">window</span><span class="p">.</span><span class="nv">current_model = </span><span class="kc">null</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <h1>Views</h1>
+
+<p>I spent a lot of time digging through backbonejs and spinejs
+and they add a lot of helper methods to make this process
+much easier, but I constantly hit points in the development
+process that would make the implementation more painful.</p>
+
+<p>Also, I wanted to implement by hand just to see what helper
+methods are actually needed vs not needed.</p>
+
+<p>So, I used the coffee-script class syntax to create objects
+that represent views.  IMO, it turns out using the jQM
+events, I did not have to implement a lot of the communication
+hooks implemented in Backbone or Spine to communicate from
+model to view via controller.</p>
+
+<p>In the single page app context it seems that the jQM navigation
+system works great for routing pages.</p>
+
+<p>Also, in the view objects I was able to hook into the jQM
+evented system and jQM Live function to manage the binding
+of many events.</p>
+
+<h1>LoginView</h1>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">class</span> <span class="nx">LoginView</span>
+      <span class="nv">constructor: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h2>PageBeforeShow</h2>
+
+<p>Bind on the page before show jQM Event to check
+for authorization, if not authorized then
+show login page
+if authorized then go to index page.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#login&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;pagebeforeshow&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+          <span class="nv">auth = </span><span class="nb">window</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">&#39;authorized&#39;</span><span class="p">)</span>
+          <span class="k">if</span> <span class="nx">auth</span><span class="o">?</span> <span class="o">and</span> <span class="nx">auth</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+            <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#home&#39;</span><span class="p">,</span> <span class="s1">&#39;slideup&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <h2>Login Form Submit</h2>
+
+<p>Bind to the submit event of the login form element
+.. be sure to use live method to work with jQM
+Post to the sessions server url
+and if successful set authorize to true</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#login form&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;submit&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+          <span class="nx">$</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/sessions&#39;</span><span class="p">).</span><span class="k">then</span> <span class="nf">(err) -&gt;</span>
+            <span class="nb">window</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span> <span class="s1">&#39;authorized&#39;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span>
+            <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#home&#39;</span><span class="p">,</span> <span class="s1">&#39;slideup&#39;</span>
+          <span class="kc">false</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <h1>ProjectHomeView</h1>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">class</span> <span class="nx">ProjectHomeView</span>
+      <span class="nv">NEW_BUTTON: </span><span class="s1">&#39;#home a[data-action=new]&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <h2>pageshow</h2>
+
+<p>get the list of projects
+and paint them to the home page</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nv">pageshow: </span><span class="nf">(event, ui) -&gt;</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;/projects&#39;</span><span class="p">)</span>
+          <span class="p">.</span><span class="k">then</span> <span class="nf">(data) -&gt;</span> 
+            <span class="nb">window</span><span class="p">.</span><span class="nv">models = </span><span class="nx">data</span>
+            <span class="nx">@source</span> <span class="o">?=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#project-list&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span>
+            <span class="nx">@template</span> <span class="o">?=</span> <span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">@source</span><span class="p">)</span>
+            <span class="nv">html = </span><span class="nx">@template</span> <span class="nv">projects: </span><span class="nx">data</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#projects-container&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#projects-container ul&#39;</span><span class="p">).</span><span class="nx">listview</span><span class="p">()</span>
+          <span class="p">.</span><span class="nx">fail</span> <span class="nf">(err) -&gt;</span>
+            <span class="nb">window</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span> <span class="s1">&#39;authorized&#39;</span><span class="p">,</span> <span class="s1">&#39;false&#39;</span>
+            <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#login&#39;</span><span class="p">,</span> <span class="s1">&#39;slidedown&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <h2>show project</h2>
+
+<p>Find the project from the array of projects
+set as the current project
+and change page to show</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nv">show_project: </span><span class="o">-&gt;</span>
+        <span class="nv">id = </span><span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;data-id&#39;</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">each</span> <span class="nb">window</span><span class="p">.</span><span class="nx">models</span><span class="p">,</span> <span class="nf">(i, prj) -&gt;</span>
+          <span class="k">if</span> <span class="nx">prj</span><span class="p">.</span><span class="nx">_id</span> <span class="o">==</span> <span class="nx">id</span>
+            <span class="nb">window</span><span class="p">.</span><span class="nv">current_model = </span><span class="nx">prj</span>
+            <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#show&#39;</span><span class="p">,</span> <span class="s1">&#39;slideup&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <h2>constructor</h2>
+
+<p>Bind to page show event 
+Bind to home button
+Bind each project li to the show_project method</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nv">constructor: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>-------  Page Home Events -------------------</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#home&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;pageshow&#39;</span><span class="p">,</span> <span class="nx">@pageshow</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">@NEW_BUTTON</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#new&#39;</span><span class="p">,</span> <span class="s1">&#39;slideup&#39;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#projects-container li a&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="nx">@show_project</span>
+
+
+    <span class="k">class</span> <span class="nx">ProjectNewView</span>
+      <span class="nv">CANCEL_BTN: </span><span class="s1">&#39;#new a[data-action=cancel]&#39;</span>
+      <span class="nv">pagebeforeshow: </span><span class="nf">(event, ui) -&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#new_name&#39;</span><span class="p">,</span> <span class="s1">&#39;#new&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#new_owner&#39;</span><span class="p">,</span> <span class="s1">&#39;#new&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#new_description&#39;</span><span class="p">,</span> <span class="s1">&#39;#new&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="nv">submit: </span><span class="o">-&gt;</span>
+        <span class="nv">prj = </span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#new form&#39;</span><span class="p">).</span><span class="nx">formParams</span><span class="p">()</span>
+        <span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
+          <span class="nv">type: </span><span class="s1">&#39;POST&#39;</span>
+          <span class="nv">url: </span><span class="s1">&#39;/projects&#39;</span>
+          <span class="nv">contentType: </span><span class="s1">&#39;application/json&#39;</span>
+          <span class="nv">data: </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">prj</span><span class="p">)).</span><span class="k">then</span> <span class="o">-&gt;</span>
+          <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#home&#39;</span><span class="p">,</span> <span class="s1">&#39;slidedown&#39;</span>
+        <span class="kc">false</span>
+      <span class="nv">constructor: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#new&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;pagebeforeshow&#39;</span><span class="p">,</span> <span class="nx">@pagebeforeshow</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">@CANCEL_BTN</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#home&#39;</span><span class="p">,</span> <span class="s1">&#39;slidedown&#39;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#new form&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;submit&#39;</span><span class="p">,</span> <span class="nx">@submit</span>
+
+    <span class="k">class</span> <span class="nx">ProjectShowView</span>
+      <span class="nv">HOME_BTN: </span><span class="s1">&#39;#show a[data-action=home]&#39;</span>
+      <span class="nv">EDIT_BTN: </span><span class="s1">&#39;#show a[data-action=edit]&#39;</span>
+      <span class="nv">NEW_STATUS: </span><span class="s1">&#39;#show a[data-action=add_status]&#39;</span>
+      <span class="nv">pagebeforeshow: </span><span class="nf">(event, ui) -&gt;</span>
+        <span class="nx">@source</span> <span class="o">?=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#show-content&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span>
+        <span class="nx">@template</span> <span class="o">?=</span> <span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">@source</span><span class="p">)</span>
+        <span class="nv">html = </span><span class="nx">@template</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">current_model</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#show&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#show div&#39;</span><span class="p">).</span><span class="nx">page</span><span class="p">()</span>
+
+      <span class="nv">constructor: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>render events</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#show&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;pagebeforeshow&#39;</span><span class="p">,</span> <span class="nx">@pagebeforeshow</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>bind to events</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">$</span><span class="p">(</span><span class="nx">@NEW_STATUS</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> 
+          <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#status_new&#39;</span><span class="p">,</span> <span class="s1">&#39;pop&#39;</span>
+          <span class="kc">false</span>
+
+        <span class="nx">$</span><span class="p">(</span><span class="nx">@EDIT_BTN</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> 
+          <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#edit&#39;</span><span class="p">,</span> <span class="s1">&#39;slideup&#39;</span>
+          <span class="kc">false</span>
+
+        <span class="nx">$</span><span class="p">(</span><span class="nx">@HOME_BTN</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> 
+          <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#home&#39;</span><span class="p">,</span><span class="s1">&#39;slidedown&#39;</span>
+          <span class="kc">false</span>
+
+    <span class="k">class</span> <span class="nx">ProjectEditView</span>
+      <span class="nv">CANCEL_BTN: </span><span class="s1">&#39;#edit a[data-action=cancel]&#39;</span>
+      <span class="nv">pagebeforeshow: </span><span class="nf">(event, ui) -&gt;</span>
+        <span class="nx">@source</span> <span class="o">?=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#edit-form&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span>
+        <span class="nx">@template</span> <span class="o">?=</span> <span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">@source</span><span class="p">)</span>
+        <span class="nv">html = </span><span class="nx">@template</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">current_model</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#edit-form-container&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#edit form&#39;</span><span class="p">).</span><span class="nx">page</span><span class="p">()</span>
+
+      <span class="nv">constructor: </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#edit&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;pagebeforeshow&#39;</span><span class="p">,</span> <span class="nx">@pagebeforeshow</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">@CANCEL_BTN</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> 
+          <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#show&#39;</span><span class="p">,</span> <span class="s1">&#39;slidedown&#39;</span>
+          <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>For some reason only works when nested...</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#edit form&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;submit&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>  
+          <span class="nv">prj = </span><span class="nb">window</span><span class="p">.</span><span class="nx">current_model</span>
+          <span class="nv">data = </span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#edit form&#39;</span><span class="p">).</span><span class="nx">formParams</span><span class="p">()</span>
+          <span class="p">[</span><span class="nx">prj</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">prj</span><span class="p">.</span><span class="nx">description</span><span class="p">,</span> <span class="nx">prj</span><span class="p">.</span><span class="nx">owner</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">data</span><span class="p">.</span><span class="nx">description</span><span class="p">,</span> <span class="nx">data</span><span class="p">.</span><span class="nx">owner</span><span class="p">]</span>
+          <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span> <span class="nv">type: </span><span class="s1">&#39;PUT&#39;</span><span class="p">,</span> <span class="nv">url: </span><span class="s2">&quot;/projects/#{prj._id}&quot;</span><span class="p">,</span> <span class="nv">contentType: </span><span class="s1">&#39;application/json&#39;</span><span class="p">,</span> <span class="nv">data: </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">prj</span><span class="p">)</span>
+          <span class="nb">window</span><span class="p">.</span><span class="nv">current_model = </span><span class="nx">prj</span>
+          <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#show&#39;</span><span class="p">,</span> <span class="s1">&#39;slidedown&#39;</span>
+          <span class="kc">false</span>
+
+
+    <span class="k">class</span> <span class="nx">StatusNewView</span>
+      <span class="nv">CANCEL_BTN: </span><span class="s1">&#39;&#39;</span>
+      <span class="nv">pagebeforeshow: </span><span class="nf">(event, ui) -&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#status_new :input&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#status_new texarea&quot;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+      <span class="nv">constructor: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>bind render events</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#status_new&#39;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;pagebeforeshow&#39;</span><span class="p">,</span> <span class="nx">@pagebeforeshow</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>bind dom events</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">$</span><span class="p">(</span><span class="nx">@CANCEL_BTN</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#show&#39;</span><span class="p">,</span> <span class="s1">&#39;slidedown&#39;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#status_new form&quot;</span><span class="p">).</span><span class="nx">live</span> <span class="s1">&#39;submit&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> 
+          <span class="nv">prj = </span><span class="nb">window</span><span class="p">.</span><span class="nx">current_model</span>
+          <span class="nx">prj</span><span class="p">.</span><span class="nx">statuses</span> <span class="o">?=</span> <span class="p">[]</span>
+          <span class="nv">status = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#status_new form&quot;</span><span class="p">).</span><span class="nx">formParams</span><span class="p">()</span>
+          <span class="nx">prj</span><span class="p">.</span><span class="nx">statuses</span><span class="p">.</span><span class="nx">unshift</span> <span class="nx">status</span>
+          <span class="nb">window</span><span class="p">.</span><span class="nv">current_model = </span><span class="nx">prj</span>
+          <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span> <span class="nv">type: </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="nv">url: </span><span class="s2">&quot;/projects/#{window.current_model._id}/statuses&quot;</span><span class="p">,</span> <span class="nv">contentType: </span><span class="s1">&#39;application/json&#39;</span><span class="p">,</span> <span class="nv">data: </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span>
+          <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">changePage</span> <span class="s1">&#39;#show&#39;</span><span class="p">,</span> <span class="s1">&#39;slidedown&#39;</span>
+          <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>----------- Init Classes -----------------------</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">login = </span><span class="k">new</span> <span class="nx">LoginView</span>
+    <span class="nv">project_home_view = </span><span class="k">new</span> <span class="nx">ProjectHomeView</span>
+    <span class="nv">project_show_view = </span><span class="k">new</span> <span class="nx">ProjectShowView</span>
+    <span class="nv">project_new_view = </span><span class="k">new</span> <span class="nx">ProjectNewView</span>
+    <span class="nv">project_edit_view = </span><span class="k">new</span> <span class="nx">ProjectEditView</span>
+    <span class="nv">status_new_view = </span><span class="k">new</span> <span class="nx">StatusNewView</span>
+
+    <span class="kc">true</span>
+
+<span class="nx">script</span> <span class="nv">src: </span><span class="s1">&#39;http://code.jquery.com/mobile/latest/jquery.mobile.min.js&#39;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

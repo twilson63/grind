@@ -15,13 +15,13 @@ describe 'app', ->
   #     asyncSpecDone()
   #   asyncSpecWait()
 
-  it 'POST sessions', ->
-    api.sessions.post { user: 'foo', password: 'bar' }, (err, results) ->
-      expect(results).toEqual('ok')
-      api.projects.get (err, results) ->
-        console.log results
-        asyncSpecDone()
-    asyncSpecWait()
+  # it 'POST sessions', ->
+  #   api.sessions.post { user: 'foo', password: 'bar' }, (err, results) ->
+  #     expect(results).toEqual('ok')
+  #     api.projects.get (err, results) ->
+  #       console.log results
+  #       asyncSpecDone()
+  #   asyncSpecWait()
 
   # it 'POST /projects', ->
   #   new_prj =

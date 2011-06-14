@@ -1,19 +1,23 @@
-#coffeekup = require('coffeekup')
+# _Grind Server Side App_ 
+# The purpose of this documentation is to document
+# the technology itself vs the nature of the application.
+
 mate = require('coffeemate')
+coffeekup = require 'coffeekup'
 mongo = require 'mongoskin'
 db = mongo.db(process.env.MONGODB_URL || 'localhost:27017/grind')
 
-# models
+# MongoSkin makes it super simple to create binded collection
+# objects very similar to the class methods of a model in
+# an object relational model.
 db.bind 'projects'
 db.bind 'users'
 
 
+# helper methods to simplify the code in the web application.
 db.projects.update_attributes = (id, data, callback) ->
   @findById id, (err, project) =>
     [project.name, project.description, project.owner] = [data.name, data.description, data.owner]
-    # project.name = data.name
-    # project.description = data.description
-    # project.owner = data.owner
     @updateById project._id, project, (err) ->
       callback project
 
@@ -25,22 +29,27 @@ db.projects.add_status = (id, status, callback) ->
     @updateById project._id, project, (err) ->
       callback project
 
-# mate.options.renderExt = '.coffee'
-# mate.options.renderDir = 'views'
-
+# Future coffeemate settings once I able to figure out
+# the include issues
+# ----
+mate.options.renderExt = '.coffee'
+mate.options.renderDir = 'views'
+#mate.coffeekup()
 # # bind coffeekup explicitly
-# mate.options.renderFunc = (tmpl, ctx) ->
-#   coffeekup.render tmpl, context: ctx
+mate.options.renderFunc = (tmpl, ctx) ->
+  coffeekup.render tmpl, context: ctx
 
+
+
+# ## Connect Middleware
 #mate.basicAuth process.env.APIKEY, process.env.SECRETKEY if process.env.APIKEY? and process.env.SECRETKEY?
 mate.cookieParser()
 mate.session secret: 'wilburwonderdog'
-
 mate.logger()
 mate.static __dirname + '/public'
 mate.bodyParser()
 
-# authenticated check middleware
+# Custom middleware that validates authentication
 mate.use (req, resp, next) ->
   app_url = req.url.match /projects|users/
   if app_url? and not req.session.authenticated?
@@ -49,25 +58,29 @@ mate.use (req, resp, next) ->
   else
     next()
 
+# Coffeemate Extension that makes it simple to send json back to the client
 mate.context.send_json = (data) ->
   @resp.writeHead 200, 'Content-Type': 'application/json'
   @resp.end JSON.stringify data
 
+# Coffeemate Extension that makes it simple to send text back to the client
 mate.context.send_text = (data) ->
   @resp.writeHead 200, 'Content-Type': 'text'
   @resp.end data
 
-
-
+# Coffeemate router code
 mate
+  # Get the html markup for the client
   .get '/', ->
     db.projects.find(active: true).toArray (err, items) =>
-      @render 'views/index.coffee'
+      @render 'index'
 
+  # Get the projects in json
   .get '/projects', ->
     db.projects.find(active: true).toArray (err, projects) =>
       @send_json projects
 
+  # Create a new project via json
    .post '/projects', ->
     project = @req.body
     project.name = project.name.split(' ').join('-').toLowerCase()

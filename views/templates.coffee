@@ -1,9 +1,21 @@
+# # Handlebar JS Templates
+# These templates are embeded in script tags and must be rendered to the 
+# browser before the client script code is initialized, in order for 
+# jQuery to locate them in the DOM
+#
+# ## Project List Template
+# This template provides the markup for the project list view
 script type: 'text/html', id: 'project-list', ->
   ul 'data-role': 'listview', 'data-filter': 'true', 'data-insert': 'true', ->
     "{{#each projects}}<li><a href='#' data-id='{{_id}}'>{{name}}</a></li>{{/each}}"
 
 
-
+# ## Edit Form Template
+# This template provides the markup for editing a project
+# originally I was using static markup, but it made the code 
+# more verbose, need to do some testing to see what is more
+# expensive setting value via jQuery or rendering templates
+# or does it matter....
 script type: 'text/html', id: 'edit-form', ->
   form action: "/projects", method: 'post', ->
     div 'data-role': 'fieldcontain', ->
@@ -18,6 +30,10 @@ script type: 'text/html', id: 'edit-form', ->
       input type: 'submit', value: 'Update'
       a href: '#', 'data-role': 'button', 'data-action': 'cancel', -> 'Cancel'
 
+# ## Show Project Template
+# This template contains the markup to show a single project
+# Again this seems to keep the code simple and not to have too
+# much of an impact on rendering to the browser.
 script type: 'text/html', id: 'show-content', ->
   div 'data-role': 'header', ->
     a href: '#', 'data-action': 'home', -> 'Projects'
